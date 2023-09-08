@@ -1,0 +1,19 @@
+{
+    "name": "Generador de Loterias",
+    "short_name": "loterias",
+    "start_url": "./?utm_source=web_app_manifest",
+    "display": "standalone",
+    "icons" : [
+        {
+          "src": "icons/nerv_512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        },
+        {
+          "src": "icons/nerv_129.png",
+          "sizes": "192x129",
+          "type": "image/png"
+        }
+    ],
+    "prefer_related_applications": false
+}

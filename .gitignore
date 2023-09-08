@@ -1,0 +1,2 @@
+images/out.*.image-*.png
+!images/out.1.image-*.png
