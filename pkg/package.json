@@ -1,0 +1,14 @@
+{
+  "name": "loteria-motor",
+  "version": "0.1.0",
+  "files": [
+    "loteria_motor_bg.wasm",
+    "loteria_motor.js",
+    "loteria_motor.d.ts"
+  ],
+  "module": "loteria_motor.js",
+  "types": "loteria_motor.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
