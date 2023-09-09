@@ -12,12 +12,15 @@ export let boards_image = new Array();
 const format_options = {
     minimumIntegerDigits: 3,
 };
+function fmtint(n) {
+    return Intl.NumberFormat("en-US", format_options).format(n);
+}
 for (let i = 0; i < 54; ++i) {
     let img = new Image();
-    img.src = `images/out.1.image-${Intl.NumberFormat("en-US", format_options).format(i)}.png`;
+    img.src = `images/out.1.image-${fmtint(i)}.png`;
     cards.push(img);
 }
-let canvas = document.getElementById('image');
+let bs = document.getElementById('boards');
 init().then(() => {
     let gen = new Generator(8, 0);
     let a = gen.next();
@@ -27,17 +30,30 @@ init().then(() => {
     }
     let width = cards[0].width;
     let height = cards[0].height;
-    if (canvas == null) {
+    if (bs == null)
         return;
+    for (const [id, b] of boards.entries()) {
+        let id_str = `canva_${fmtint(id)}`;
+        let canvas = document.createElement("canvas");
+        canvas.id = id_str;
+        canvas.className = 'loteria';
+        canvas.width = width * 4;
+        canvas.height = height * 4;
+        let ctx = canvas.getContext("2d");
+        if (ctx == null)
+            return;
+        ctx.drawImage(cards[0], 0, 0); //i * width , j * height);
+        bs.appendChild(canvas);
+        for (let ij = 0; ij < 16; ++ij) {
+            let i = ij % 4;
+            let j = Math.floor(ij / 4);
+            ctx.drawImage(cards[b[ij]], i * width, j * height);
+        }
+        let data_url = canvas.toDataURL('image/png');
+        let download_link = document.createElement('a');
+        let url = data_url.replace(/^data:image\/png/, 'data:application/octet-stream');
+        download_link.setAttribute('href', url);
+        download_link.setAttribute('download', `loteria_${id}.png`);
+        download_link.click();
     }
-    canvas.width = width * 4;
-    canvas.height = height * 4;
-    let ctx = canvas.getContext("2d");
-    if (ctx == null) {
-        return;
-    }
-    ctx.drawImage(cards[0], 0 * width, 0 * height);
-    ctx.drawImage(cards[1], 1 * width, 1 * height);
-    ctx.drawImage(cards[2], 2 * width, 2 * height);
-    ctx.drawImage(cards[3], 3 * width, 3 * height);
 });
