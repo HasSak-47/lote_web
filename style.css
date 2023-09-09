@@ -1,0 +1,9 @@
+.loteria{
+    border: 10px solid black;
+    border-width: 10px;
+    margin: 5px;
+}
+
+body{
+    display: flex;
+}

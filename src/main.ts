@@ -1,7 +1,8 @@
 import init, { Generator, Array16u8 } from "../pkg/loteria_motor.js";
 
-function toArray(a: Array16u8) : Number[]{
-    let array : Number[] = new Array();
+
+function toArray(a: Array16u8) : number[]{
+    let array : number[] = new Array();
     for(let i = 0; i < 16; ++i){
         array[i] = a.get(i);
     }
@@ -9,7 +10,7 @@ function toArray(a: Array16u8) : Number[]{
     return array;
 }
 
-export let boards : Number[][] = new Array();
+export let boards : number[][] = new Array();
 export let cards : HTMLImageElement[] = new Array();
 export let boards_image : HTMLImageElement[] = new Array();
 const format_options: Intl.NumberFormatOptions = {
@@ -22,7 +23,7 @@ function fmtint(n: number) : string {
 
 for(let i = 0; i < 54; ++i){
     let img = new Image();
-    img.src = `images/out.1.image-${ fmtint(i) }.png`;
+    img.src = `images/out.1.image-${fmtint(i)}.png`;
     cards.push(img);
 }
 
@@ -40,35 +41,30 @@ init().then(() => {
     let height = cards[0].height;
 
     if (bs == null) return; 
-    for(const [i, b] of boards.entries()){
-        let id = `canva_${fmtint(i)}`;
-        bs.innerHTML += `<canvas id="${id}"></canvas>`;
-        let canvas = document.getElementById(id) as HTMLCanvasElement;
-        if(canvas == null) return;
+    for(const [id, b] of boards.entries()){
+        let id_str = `canva_${fmtint(id)}`;
+        let canvas = document.createElement("canvas");
+        canvas.id = id_str;
+        canvas.className = 'loteria';
 
-        let height = cards[0].width;
-        let width  = cards[1].width;
         canvas.width = width * 4;
         canvas.height = height * 4;
 
         let ctx = canvas.getContext("2d");
         if(ctx == null) return;
+        ctx.drawImage(cards[0], 0, 0)//i * width , j * height);
+        bs.appendChild(canvas);
         for(let ij = 0; ij < 16; ++ij){
             let i = ij % 4;
-            let j = ij / 4;
+            let j = Math.floor(ij / 4);
 
-            let indx = b[ij] as number;
-            ctx.drawImage(cards[indx], i * width , j * height);
+            ctx.drawImage(cards[b[ij]], i * width, j * height);
         }
+        let data_url = canvas.toDataURL('image/png');
+        let download_link = document.createElement('a');
+        let url = data_url.replace(/^data:image\/png/,'data:application/octet-stream');
+        download_link.setAttribute('href', url);
+        download_link.setAttribute('download', `loteria_${id}.png`);
+        download_link.click();
     }
-
-
-    // canvas.width = width * 4;
-    // canvas.height = height * 4;
-    // let ctx = canvas.getContext("2d");
-    // if(ctx == null){return;}
-    // ctx.drawImage(cards[0], 0 * width, 0 * height);
-    // ctx.drawImage(cards[1], 1 * width, 1 * height);
-    // ctx.drawImage(cards[2], 2 * width, 2 * height);
-    // ctx.drawImage(cards[3], 3 * width, 3 * height);
 })
