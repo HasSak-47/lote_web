@@ -21,15 +21,30 @@ function fmtint(n: number) : string {
     return Intl.NumberFormat("en-US", format_options).format(n);
 }
 
-for(let i = 0; i < 54; ++i){
-    let img = new Image();
-    img.src = `images/out.1.image-${fmtint(i)}.png`;
-    cards.push(img);
+let bs = document.getElementById('boards');
+async function load_images() {
+    const promise_array = [];
+    const   image_array : HTMLImageElement[] = [];
+
+    for(let i = 0; i < 54; ++i){
+        promise_array.push(new Promise( __resolve => {
+            const img = new Image();
+
+            img.onload = function(){
+                __resolve('resolved!');
+            }
+
+            img.src = `images/out.1.image-${fmtint(i)}.png`;
+            image_array.push(img);
+        }));
+    }
+
+    await Promise.all(promise_array);
+    return image_array;
 }
 
-let bs = document.getElementById('boards');
-
-init().then(() => {
+init().then(async () => {
+    cards = await load_images();
     let gen = new Generator(8, 0);
     let a = gen.next();
     while(a != null){
@@ -63,7 +78,7 @@ init().then(() => {
     }
 })
 
-function save(){
+export function save_lotes(){
     let canvas = document.getElementsByClassName('loteria') as HTMLCollectionOf<HTMLCanvasElement>;
     let len = canvas.length;
     for(let i = 0; i < len; ++i){
