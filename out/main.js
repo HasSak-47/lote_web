@@ -49,11 +49,18 @@ init().then(() => {
             let j = Math.floor(ij / 4);
             ctx.drawImage(cards[b[ij]], i * width, j * height);
         }
-        let data_url = canvas.toDataURL('image/png');
+    }
+});
+function save() {
+    let canvas = document.getElementsByClassName('loteria');
+    let len = canvas.length;
+    for (let i = 0; i < len; ++i) {
+        let canva = canvas[i];
+        let data_url = canva.toDataURL('image/png');
         let download_link = document.createElement('a');
         let url = data_url.replace(/^data:image\/png/, 'data:application/octet-stream');
         download_link.setAttribute('href', url);
-        download_link.setAttribute('download', `loteria_${id}.png`);
+        download_link.setAttribute('download', `loteria_${i}.png`);
         download_link.click();
     }
-});
+}
