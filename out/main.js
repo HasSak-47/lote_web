@@ -1,3 +1,12 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import init, { Generator } from "../pkg/loteria_motor.js";
 function toArray(a) {
     let array = new Array();
@@ -15,13 +24,27 @@ const format_options = {
 function fmtint(n) {
     return Intl.NumberFormat("en-US", format_options).format(n);
 }
-for (let i = 0; i < 54; ++i) {
-    let img = new Image();
-    img.src = `images/out.1.image-${fmtint(i)}.png`;
-    cards.push(img);
-}
 let bs = document.getElementById('boards');
-init().then(() => {
+function load_images() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const promise_array = [];
+        const image_array = [];
+        for (let i = 0; i < 54; ++i) {
+            promise_array.push(new Promise(__resolve => {
+                const img = new Image();
+                img.onload = function () {
+                    __resolve('resolved!');
+                };
+                img.src = `images/out.1.image-${fmtint(i)}.png`;
+                image_array.push(img);
+            }));
+        }
+        yield Promise.all(promise_array);
+        return image_array;
+    });
+}
+init().then(() => __awaiter(void 0, void 0, void 0, function* () {
+    cards = yield load_images();
     let gen = new Generator(8, 0);
     let a = gen.next();
     while (a != null) {
@@ -50,8 +73,8 @@ init().then(() => {
             ctx.drawImage(cards[b[ij]], i * width, j * height);
         }
     }
-});
-function save() {
+}));
+export function save_lotes() {
     let canvas = document.getElementsByClassName('loteria');
     let len = canvas.length;
     for (let i = 0; i < len; ++i) {

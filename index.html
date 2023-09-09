@@ -7,8 +7,16 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <button onclick="save()"></button>
+        <button onclick="main_mod.save_lotes()"> save </button><br>
         <div id="boards"></div>
     </body>
     <script type="module" src="out/main.js"></script>
+    <script>
+        let main_mod = {};
+        async function load_main(){
+            main_mod = await import('./out/main.js');
+            console.log(main_mod);
+        }
+        load_main();
+    </script>
 </html>
